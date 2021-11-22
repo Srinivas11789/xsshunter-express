@@ -34,4 +34,25 @@ async function send_email_notification(xss_payload_fire_data) {
 	console.log("Message sent: %s", info.messageId);
 }
 
+async function send_slack_notification(xss_payload_fire_data) {
+
+	const notification_html_email_body = mustache.render(
+		XSS_PAYLOAD_FIRE_EMAIL_TEMPLATE, 
+		xss_payload_fire_data
+	);
+
+	const info = await fetch(
+		process.env.SLACK_WEBHOOK,
+		{
+		  method: 'post',
+		  headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(notification_html_email_body)
+	}).then( function(response){ return console.log(response) } );
+	 
+	console.log("Message sent: %s", info);
+}
+
 module.exports.send_email_notification = send_email_notification;
+module.exports.send_slack_notification = send_slack_notification;
